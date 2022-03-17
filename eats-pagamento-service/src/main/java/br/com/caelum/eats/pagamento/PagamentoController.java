@@ -1,13 +1,22 @@
 package br.com.caelum.eats.pagamento;
 
-import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
-
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/pagamentos")
@@ -15,7 +24,9 @@ import java.util.stream.Collectors;
 class PagamentoController {
 
 	private PagamentoRepository pagamentoRepo;
-	private PedidoClienteComFeign pedidoCliente;
+	
+	@Autowired
+	private PedidoService pedidoService;
 
 	@GetMapping
 	ResponseEntity<List<PagamentoDto>> lista() {
@@ -27,9 +38,7 @@ class PagamentoController {
 
 	@GetMapping("/{id}")
 	PagamentoDto detalha(@PathVariable("id") Long id) {
-		return pagamentoRepo.findById(id)
-				.map(PagamentoDto::new)
-				.orElseThrow(ResourceNotFoundException::new);
+		return pedidoService.detalha(id, pagamentoRepo);
 	}
 
 	@PostMapping
@@ -42,11 +51,8 @@ class PagamentoController {
 
 	@PutMapping("/{id}")
 	PagamentoDto confirma(@PathVariable("id") Long id) {
-		Pagamento pagamento = pagamentoRepo.findById(id).orElseThrow(ResourceNotFoundException::new);
-		pagamento.setStatus(Pagamento.Status.CONFIRMADO);
-		pedidoCliente.notificaServicoDePedidoParaMudarStatus(pagamento.getPedidoId(), new MudancaDeStatusDoPedido("pago"));
-		pagamentoRepo.save(pagamento);
-		return new PagamentoDto(pagamento);
+		// Service
+		return pedidoService.notificaServicoDePedidoParaMudarStatus(id, pagamentoRepo);
 	}
 
 	@DeleteMapping("/{id}")
