@@ -8,6 +8,13 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+        - "routes"
+
 zuul:
   routes:
     monolito:
@@ -16,11 +23,3 @@ zuul:
       
   sensitive-headers:
   - Cookie, Authorization
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include:
-        - "routes"
-        
