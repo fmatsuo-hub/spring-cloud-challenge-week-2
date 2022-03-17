@@ -13,6 +13,9 @@ zuul:
     monolito:
       path: /**
       strip-prefix: false
+      
+  sensitive-headers:
+  - Cookie, Authorization
 
 management:
   endpoints:
@@ -21,6 +24,3 @@ management:
         include:
         - "routes"
         
-
-
-
