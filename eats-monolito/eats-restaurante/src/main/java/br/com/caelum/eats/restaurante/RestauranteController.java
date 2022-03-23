@@ -3,6 +3,8 @@ package br.com.caelum.eats.restaurante;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -41,6 +43,8 @@ class RestauranteController {
 
 	@PostMapping("/parceiros/restaurantes")
 	Restaurante adiciona(@RequestBody Restaurante restaurante) {
+		// Authentication authentication =
+		// SecurityContextHolder.getContext().getAuthentication();
 		restaurante.setAprovado(false);
 		Restaurante restauranteSalvo = restauranteRepo.save(restaurante);
 		Cardapio cardapio = new Cardapio();
@@ -49,18 +53,18 @@ class RestauranteController {
 		return restauranteSalvo;
 	}
 
-  @PutMapping("/parceiros/restaurantes/{id}")
-  public RestauranteDto atualiza(@PathVariable Long id, @RequestBody RestauranteDto restaurante) {
-    Restaurante doBD = restauranteRepo.getOne(id);
-    restaurante.populaRestaurante(doBD);
-    return new RestauranteDto(restauranteRepo.save(doBD));
-  }
+	@PutMapping("/parceiros/restaurantes/{id}")
+	public RestauranteDto atualiza(@PathVariable Long id, @RequestBody RestauranteDto restaurante) {
+		// Authentication authentication =
+		// SecurityContextHolder.getContext().getAuthentication();
+		Restaurante doBD = restauranteRepo.getOne(id);
+		restaurante.populaRestaurante(doBD);
+		return new RestauranteDto(restauranteRepo.save(doBD));
+	}
 
-
-  @GetMapping("/admin/restaurantes/em-aprovacao")
+	@GetMapping("/admin/restaurantes/em-aprovacao")
 	List<RestauranteDto> emAprovacao() {
-		return restauranteRepo.findAllByAprovado(false).stream().map(RestauranteDto::new)
-				.collect(Collectors.toList());
+		return restauranteRepo.findAllByAprovado(false).stream().map(RestauranteDto::new).collect(Collectors.toList());
 	}
 
 	@Transactional

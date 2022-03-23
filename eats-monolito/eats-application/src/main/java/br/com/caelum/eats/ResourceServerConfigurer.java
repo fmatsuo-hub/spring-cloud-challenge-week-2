@@ -13,11 +13,8 @@ public class ResourceServerConfigurer extends ResourceServerConfigurerAdapter{
 		
 		// ROTAS PARA USUÁRIO AUTENTICADO
 		http.authorizeRequests()
-			.antMatchers(HttpMethod.POST, "/parceiros/restaurantes")
-			.hasRole("RESTAURANTE");
+		.antMatchers(HttpMethod.POST, "/**/parceiros/restaurantes").hasRole("RESTAURANTE")
+		.antMatchers(HttpMethod.PUT, "/**/parceiros/restaurantes/**").hasRole("RESTAURANTE");
 		
-		http.authorizeRequests()
-		    .antMatchers(HttpMethod.PUT, "/parceiros/restaurantes/{id}")
-		    .hasRole("RESTAURANTE");
 	}
 }

@@ -16,10 +16,10 @@ management:
         - "routes"
 
 zuul:
-  routes:
-    monolito:
-      path: /**
-      strip-prefix: false
+  sensitive-headers:  
+      - Cookie, Authorization
+  #routes:
+    #monolito:
+      #path: /**
+      #strip-prefix: false
       
-  sensitive-headers:
-  - Cookie, Authorization
